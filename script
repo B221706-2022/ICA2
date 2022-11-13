@@ -1,0 +1,23 @@
+#!/bin/python3
+
+import os, subprocess, shutil
+
+species = 'ascomycete fungi'
+genename = 'pyruvate dehydrogenase'
+subprocess.call(f"esearch -db protein -query '（{species}[Organism]） AND ({genename}[protein name])' | efetch -format fasta > ~/ICA2/a.fasta", shell=True)
+genefile = open(os.environ['HOME']+'/ICA2/a.fasta').read()
+genes = genefile.split('\n')
+n = 0
+genelist = []
+for i in genes :
+    if i.startswith('>') :
+        gene = i.split('[')[1].split(']')[0]
+        genelist.append(gene)
+        n +=1
+print(n and ', '.join(genelist))
+if n > 1000 :
+    print('ERROR, please type a more accurate organism and run the program again')
+    exit()
+
+
+

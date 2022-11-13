@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#clustalo -t Protein -i ~/ICA2/a.fasta -o ~/ICA2/asd --outfmt msf
+
+#plotcon -sformat msf ~/ICA2/asd -graph cps
+
+#pepstats -sequence ~/ICA2/a.fasta -outfile ~/ICA2/statistics
