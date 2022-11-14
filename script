@@ -2,11 +2,15 @@
 
 import os, subprocess, shutil
 
-species = 'ascomycete fungi'
-genename = 'pyruvate dehydrogenase'
-subprocess.call(f"esearch -db protein -query '（{species}[Organism]） AND ({genename}[protein name])' | efetch -format fasta > ~/ICA2/a.fasta", shell=True)
+#speciesgive = 'ascomycete fungi'
+#genenamegive = 'pyruvate dehydrogenase'
+#get the input from user
+
+#subprocess.call(f"esearch -db protein -query '（{speciesgive}[Organism]） AND ({genenamegive}[protein name])' | efetch -format fasta > ~/ICA2/a.fasta", shell=True)
 genefile = open(os.environ['HOME']+'/ICA2/a.fasta').read()
 genes = genefile.split('\n')
+#get a list with each line viewing a item
+
 n = 0
 genelist = []
 for i in genes :
@@ -14,10 +18,48 @@ for i in genes :
         gene = i.split('[')[1].split(']')[0]
         genelist.append(gene)
         n +=1
-print(n and ', '.join(genelist))
+#print(n and ', '.join(genelist))
+#show the search result (all the gene name) to the user
 if n > 1000 :
     print('ERROR, please type a more accurate organism and run the program again')
     exit()
+#if the quantity of genes is too large ask user to type a accurate name
+
+allseqerror = genefile.rstrip('\n').split('>')
+allseq = allseqerror[1::]
+seqdic = {}
+for i in allseq :
+    genename = i .split('[')[1].split(']')[0]
+    seqdic[genename] = i.replace('\n','').split(']')[1]
+#make a dictionary whose keys are gene name and values are sequences
+
+if n > 200 :
+    answer = input("The number of gene searched is more than 200. Do you want to narrow the amount of genes. \n\t please type 'yes' or 'no' \n\t")
+    #while answer != 'yes' or 'no' :
+        #answer = input("WRONG ANSWER.\n\t Please type 'yes' or 'no'")
+    if answer == 'yes':
+        propor = (1-float(input(', please choose the porportion of genes you want(for example 0.6)')))/2
+        seqlengthdic = {}
+        for i in seqdic.keys() :
+            seqlength = len(seqdic[i])
+            seqlengthdic[i] = seqlength
+        sort_seqlengthdic = sorted(seqlengthdic.items(), key = lambda x: x[1])
+        #make a dic contented the length of each sequence
+        selectnum = round(n * propor )
+        selectgene = list(seqdic.keys())[selectnum : n-selectnum]
+        selectseq = list(seqdic.values())[selectnum : n-selectnum]
+        selectdic = {}
+        for i in range(0,len(selectgene)+1) :
+            selectdic[selectgene] = selectseq
+# according to user's choice, selecting some sequences from previous dic and make a new select dic
+# I need to using the new dic to make a new file for later sequence operate
+ 
+        
+            
+
+
+
+
 
 
 
