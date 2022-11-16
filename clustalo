@@ -1,7 +1,28 @@
 #!/bin/bash
 
-#clustalo -t Protein -i ~/ICA2/a.fasta -o ~/ICA2/asd --outfmt msf
+#clustalo -t Protein -i ~/ICA2/a.fasta -o ~/ICA2/asd --outfmt msf  all sequences
 
-#plotcon -sformat msf ~/ICA2/asd -graph cps
+#plotcon -sformat msf ~/ICA2/asd -graph cps    all sequences
 
-#pepstats -sequence ~/ICA2/a.fasta -outfile ~/ICA2/statistics
+#pepstats -sequence ~/ICA2/a.fasta -outfile ~/ICA2/statistics   all sequences
+
+#pepinfo -sequence ~/ICA2/a.fasta -graph png -outfile ~/ICA2/pepinfo_analysis   one sequence only
+
+#prettyplot -sequences ~/ICA2/selection.fasta -graph png    sequences outfiles need to be located
+
+#patmatmotifs -sequence ~/ICA2/selection.fasta -outfile ~/ICA2/motifs_analysis one sequence only
+
+# 
+
+seqlengthdic = {}
+        for i in seqdic.keys() :
+            seqlength = len(seqdic[i])
+            seqlengthdic[i] = seqlength
+        sort_seqlengthdic = sorted(seqlengthdic.items(), key = lambda x: x[1])
+        #make a dic contented the length of each sequence
+        selectnum = round(n * propor )
+        selectgene = list(seqdic.keys())[selectnum : n-selectnum]
+        selectseq = list(seqdic.values())[selectnum : n-selectnum]
+        selectdic = {}
+        for i in range(0,len(selectgene)+1) :
+            selectdic[selectgene] = selectseq

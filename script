@@ -1,13 +1,14 @@
 #!/bin/python3
 
-import os, subprocess, shutil
-
-#speciesgive = 'ascomycete fungi'
-#genenamegive = 'pyruvate dehydrogenase'
+import os , subprocess , shutil , re
+shutil.copy('localdisk/data/BPSM/ICA2/pullseq',os.environ['HOME']+'/ICA2')
+os.chdir(os.environ['HOME']+'/ICA2')
+speciesgive = input('Please enter the organism name you want to search\n\t')
+genenamegive = input('Please enter the gene name you want to search\n\t')
 #get the input from user
 
-#subprocess.call(f"esearch -db protein -query '（{speciesgive}[Organism]） AND ({genenamegive}[protein name])' | efetch -format fasta > ~/ICA2/a.fasta", shell=True)
-genefile = open(os.environ['HOME']+'/ICA2/a.fasta').read()
+subprocess.call(f"esearch -db protein -query '{speciesgive}[Organism] AND ({genenamegive}[protein name])' | efetch -format fasta > ~/ICA2/sequences.fasta", shell=True)
+genefile = open(os.environ['HOME']+'/ICA2/sequences.fasta').read()
 genes = genefile.split('\n')
 #get a list with each line viewing a item
 
@@ -21,7 +22,7 @@ for i in genes :
 #print(n and ', '.join(genelist))
 #show the search result (all the gene name) to the user
 if n > 1000 :
-    print('ERROR, please type a more accurate organism and run the program again')
+    print('ERROR! Please type a more accurate organism and run the program again.')
     exit()
 #if the quantity of genes is too large ask user to type a accurate name
 
@@ -34,32 +35,72 @@ for i in allseq :
 #make a dictionary whose keys are gene name and values are sequences
 
 if n > 200 :
-    answer = input("The number of gene searched is more than 200. Do you want to narrow the amount of genes. \n\t please type 'yes' or 'no' \n\t")
-    #while answer != 'yes' or 'no' :
-        #answer = input("WRONG ANSWER.\n\t Please type 'yes' or 'no'")
+    answer = input(f"The number of gene searched is {n}, which is more than 200. Do you want to narrow the amount of genes? \n\tPlease type 'yes' or 'no' \n\t")
+    while answer != 'yes' and 'no' :
+        answer = input("WRONG ANSWER.\n\t Please type 'yes' or 'no'.")
     if answer == 'yes':
-        propor = (1-float(input(', please choose the porportion of genes you want(for example 0.6)')))/2
-        seqlengthdic = {}
-        for i in seqdic.keys() :
-            seqlength = len(seqdic[i])
-            seqlengthdic[i] = seqlength
-        sort_seqlengthdic = sorted(seqlengthdic.items(), key = lambda x: x[1])
-        #make a dic contented the length of each sequence
-        selectnum = round(n * propor )
-        selectgene = list(seqdic.keys())[selectnum : n-selectnum]
-        selectseq = list(seqdic.values())[selectnum : n-selectnum]
-        selectdic = {}
-        for i in range(0,len(selectgene)+1) :
-            selectdic[selectgene] = selectseq
-# according to user's choice, selecting some sequences from previous dic and make a new select dic
-# I need to using the new dic to make a new file for later sequence operate
- 
+        maxlength = input('Please enter the maxminum length of sequence you want to analysis. (For example 400) \n')
+        minlength = input('Please enter the minimum length of sequence you want to analysis. (For example 100) \n')
+        subprocess.call(f'./pullseq -i ~/ICA2/sequences.fasta -m {minlength} -a {maxlength} > ~/ICA2/selected.fasta ' , shell = True)
+#select the sequences with the order of user's and put all the sequences into one new fasta file
+
+genefile_after = open(os.environ['HOME']+'/ICA2/selected.fasta').read()
+genes_after = genefile_after.split('\n')
+n_after = 0
+genelist_after = []
+for i in genes_after :
+    if i.startswith('>') :
+        gene = i.split('[')[1].split(']')[0]
+        genelist_after.append(gene)
+        n_after +=1
+allname_after = ', '.join(genelist_after)
+#get total gene amount and all the gene names for showing them to user later
+def show():    
+    print('\tMANU\nclustalo\tGeneral purpose multiple sequence alignment program for proteins\nplotcon\t\tPlot conservation of a sequence alignment(but you should do clustalo first)')
+    print('pepstats\tCalculate statistics of protein properties\npatmatmotifs\tScan a protein sequence with motifs from the PROSITE database')
+    print('prettyplot\tDraw a sequence alignment with pretty formatting\npatmatmotifs\tScan a protein sequence with motifs from the PROSITE database')
+show()
+choice = input("What protein sequence analysis do you want to do. Here are the manu of the protein sequence analysis? (If you want to quit, just print 'exit')\n\t").lower()
+#show all the functions to user and get the choice
+
+while choice != 'exit' :
+    if choice == 'clustalo' :
+        subprocess.call('clustalo -t Protein -i ~/ICA2/selected.fasta -o ~/ICA2/clustalo_analysis.msf --outfmt msf ' , shell = True )
+        show()
+        choice = input("The result of clustalo analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t").lower()
         
-            
+    if choice == 'plotcon' :
+        subprocess.call('plotcon -sformat msf ~/ICA2/clustalo_analysis.msf -graph png' , shell = True )
+        show()
+        choice = input("The picture of plotcon analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t").lower()
+        
+    if choice == 'pepstats' :
+        subprocess.call('pepstats -sequence ~/ICA2/selected.fasta -outfile ~/ICA2/statistics_analysis' , shell = True )
+        show()
+        choice = input("The result of pepstats analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t" ).lower()
+        
+    if choice == 'pepinfo' :
+        print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
+        name = input('Please enter choose one gene name ,from the list above, you want to analysis')
+        subprocess.call(f'./pullseq -i ~/ICA2/sequences.fasta -g {name} > ~/ICA2/{name}.fasta ' , shell = True)
+        subprocess.call(f'pepinfo -sequence ~/ICA2/{name}.fasta -graph png -outfile ~/ICA2/{name}_pepinfo_analysis')
+        show()
+        choice = input("The picture of pepinfo analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t").lower()
+        
+    if choice == 'prettyplot' :
+        os.chdir(os.environ['HOME']+'/ICA2')
+        subprocess.call('prettyplot -sequences ~/ICA2/selection.fasta -graph png')
+        show()
+        choice = input("The picture of prettyplot analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t").lower()
+    if choice == 'patmatmotifs' :
+        print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
+        name = input('Please enter choose one gene name ,from the list above, you want to analysis')
+        subprocess.call(f'./pullseq -i ~/ICA2/sequences.fasta -g {name} > ~/ICA2/{name}.fasta ' , shell = True)
+        subprocess.call(f'patmatmotifs -sequence ~/ICA2/{name}.fasta -outfile ~/ICA2/{name}_motifs_analysis')
+        show()
+        choice = input("The result of patmatmotifs analysis has been put in ICA2. What else do you want to do? (If you want to quit, just print 'exit')\n\t").lower()
+print('THANK YOU for using this program, Have a nice day!')
+exit()
 
-
-
-
-
-
-
+#the name of gene has space in it. tommorrow I need to work it out.
+#most of works have been completed
