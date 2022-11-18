@@ -1,0 +1,8 @@
+#!/bin/python3
+import os
+file = open(os.environ['HOME'] + '/ICA2/EEH11658.1_motifs_analysis').read().split('#')
+num = 0
+for i in file :
+    if i.startswith(' HitCount') :
+        num = i.split(' ')[-1].rstrip()
+print(num)

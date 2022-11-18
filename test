@@ -31,5 +31,31 @@ with open('lkj.txt','w') :
             os.chdir(os.environ['HOME'] + '/ICA2')
             subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{name}.fasta | pepinfo -sequence ~/ICA2/{name}.fasta -graph png -outfile ~/ICA2/{name}_pepinfo_analysis' , shell = True)
         else :
+            name = namechange()
             namewithout = name.replace(' ' , '_')       
             subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{namewithout}.fasta | pepinfo -sequence ~/ICA2/{namewithout}.fasta -graph png -outfile ~/ICA2/{namewithout}_pepinfo_analysis')
+
+
+
+            os.mkdir(os.environ['HOME'] +'/ICA2/patmatmotifs_result')
+        os.chdir(os.environ['HOME'] +'/ICA2/patmatmotifs_result')
+        for i in genes_after :
+            if i.startswith('>') :
+                session = i.split('>')[1].split(' ')[0]
+                with open(os.environ['HOME'] +'/ICA2/patmatmotifs_result/session.txt','w') :
+                    open(os.environ['HOME'] +'/ICA2/patmatmotifs_result/session.txt','w').write(session) 
+                    os.chdir(os.environ['HOME'] +'/ICA2')
+                    subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n ~/ICA2/patmatmotifs_result/session.txt > ~/ICA2/patmatmotifs_result/{session}.fasta | patmatmotifs -sequence ~/ICA2/patmatmotifs_result/{session}.fasta -outfile ~/ICA2/patmatmotifs_result/{session}_motifs_analysis' , shell = True)
+                
+
+                os.mkdir(os.environ['HOME'] +'/ICA2/pepinfo_result')
+        os.chdir(os.environ['HOME'] +'/ICA2/pepinfo_result')
+        for i in genes_after :
+            if i.startswith('>') :
+                session = i.split('>')[1].split(' ')[0]
+                with open(os.environ['HOME'] +'/ICA2/pepinfo_result/session.txt','w') :
+                    open(os.environ['HOME'] +'/ICA2/pepinfo_result/session.txt','w').write(session) 
+                    os.mkdir(os.environ['HOME'] + f'/ICA2/{session}')
+                    os.chdir(os.environ['HOME'] +'/ICA2')
+                    
+                    subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n ~/ICA2/pepinfo_result/session.txt > ~/ICA2/pepinfo_result/{session}.fasta | pepinfo -sequence ~/ICA2/pepinfo_result/{session}.fasta -graph png -outfile ~/ICA2/pepinfo_result/{session}_pepinfo_analysis' , shell=True)
