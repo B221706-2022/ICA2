@@ -33,10 +33,10 @@ for i in allseq :
 if n > 200 :
     answer = input(f"The number of gene searched is {n}, which is more than 200. Do you want to narrow the amount of genes? \n\tPlease type 'yes' or 'no' \n\t").lower()
     while ['yes','no'].count(answer) == 0 :
-        answer = input("WRONG ANSWER.\n\t Please type 'yes' or 'no'.")
+        answer = input("WRONG ANSWER.\n\t Please type 'yes' or 'no'.\n\t")
     if answer == 'yes':
-        maxlength = input('Please enter the maxminum length of sequence you want to analysis. (For example 400) \n')
-        minlength = input('Please enter the minimum length of sequence you want to analysis. (For example 100) \n')
+        maxlength = input('Please enter the maxminum length of sequence you want to analysis. (For example 400) \n\t')
+        minlength = input('Please enter the minimum length of sequence you want to analysis. (For example 100) \n\t')
         subprocess.call(f'./pullseq -i ~/ICA2/sequences.fasta -m {minlength} -a {maxlength} > ~/ICA2/selected.fasta ' , shell = True)
     if answer == 'no' :
         os.chdir(os.environ['HOME']+'/ICA2')
@@ -147,6 +147,9 @@ while choice != 'exit' :
         print(f'\nUsing PROSITE database, finding {number} motif(s) in {name_session}\n')
         show()
         choice = input("The result of patmatmotifs analysis has been put in ICA2. (The file name has changed into its session number {name_session}) What else do you want to do? \n(If you want to quit, just print 'exit')\n\t").lower()
+    if ['plotcon' , 'pepstats' , 'pepinfo' , 'patmatmotifs' , 'clustalo'].count('choice') == 0 :
+        show()
+        choice = input("\nWRONG FUNCTION. Please type right function above. \n(If you want to quit, just print 'exit')\n\t").lower()
 print('THANK YOU for using this program, Have a nice day!')
 exit()
 
