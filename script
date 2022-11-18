@@ -61,7 +61,7 @@ allname_after = ', '.join(genelist_after)
 def show():    
     print('\tMANU\nclustalo\tGeneral purpose multiple sequence alignment program for proteins\nplotcon\t\tPlot conservation of a sequence alignment(but you should do clustalo first)')
     print('pepstats\tCalculate statistics of protein properties\npatmatmotifs\tScan a protein sequence with motifs from the PROSITE database')
-    print('prettyplot\tDraw a sequence alignment with pretty formatting\npatmatmotifs\tScan a protein sequence with motifs from the PROSITE database')
+    print('prettyplot\tDraw a sequence alignment with pretty formatting\npepinfo\tPlot amino acid properties of a protein sequence in parallel')
 show()
 choice = input("What protein sequence analysis do you want to do. Here are the manu of the protein sequence analysis? (If you want to quit, just print 'exit')\n\t").lower()
 #show all the functions to user and get the choice
@@ -98,10 +98,15 @@ while choice != 'exit' :
         choice = input("The result of pepstats analysis has been put in ICA2. What else do you want to do? \n(If you want to quit, just print 'exit')\n\t" ).lower()
         
     if choice == 'pepinfo' :
-        print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
-        name = input('Please enter choose one gene name ,from the list above, you want to analysis')
-        subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -g {name} > ~/ICA2/{name}.fasta ' , shell = True)
-        subprocess.call(f'pepinfo -sequence ~/ICA2/{name}.fasta -graph png -outfile ~/ICA2/{name}_pepinfo_analysis')
+        os.mkdir(os.environ['HOME'] +'/ICA2/pepinfo_result')
+        os.chdir(os.environ['HOME'] +'/ICA2/pepinfo_result')
+        for i in genes_after :
+            if i.startswith('>') :
+                session = i.split('>')[1].split(' ')[0]
+                with open(os.environ['HOME'] +'/ICA2/pepinfo_result/session.txt','w') :
+                    open(os.environ['HOME'] +'/ICA2/pepinfo_result/session.txt','w').write(session) 
+                    os.chdir(os.environ['HOME'] +'/ICA2')
+                    subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n ~/ICA2/pepinfo_result/session.txt > ~/ICA2/pepinfo_result/{session}.fasta | pepinfo -sequence ~/ICA2/pepinfo_result/{session}.fasta -graph png -outfile ~/ICA2/pepinfo_result/{session}_pepinfo_analysis' , shell=True)
         show()
         choice = input("The picture of pepinfo analysis has been put in ICA2. What else do you want to do? \n(If you want to quit, just print 'exit')\n\t").lower()
         
@@ -112,18 +117,18 @@ while choice != 'exit' :
         choice = input("The picture of prettyplot analysis has been put in ICA2. What else do you want to do? \n(If you want to quit, just print 'exit')\n\t").lower()
     
     if choice == 'patmatmotifs' :
-        print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
-        name = input('Please enter choose one gene name ,from the list above, you want to analysis\n\t')
-        if allname_after.count(name) > 1 :
-            name = namechange(name,allname_after,genefile_after)
-            with open(name,'w') :
-                open(name,'w').write(f'{name}')
-            os.chdir(os.environ['HOME'] + '/ICA2')
-            subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{name}.fasta' , shell = True)
-            subprocess.call(f'patmatmotifs -sequence ~/ICA2/{name}.fasta -outfile ~/ICA2/{name}_motifs_analysis -full')
-        else :
-            namewithout = name.replace(' ' , '_')       
-            subprocess.call(f'patmatmotifs -sequence ~/ICA2/{namewithout}.fasta -outfile ~/ICA2/{namewithout}_motifs_analysis')
+        os.mkdir(os.environ['HOME'] +'/ICA2/patmatmotifs_result')
+        os.chdir(os.environ['HOME'] +'/ICA2/patmatmotifs_result')
+        for i in genes_after :
+            if i.startswith('>') :
+                session = i.split('>')[1].split(' ')[0]
+                with open(os.environ['HOME'] +'/ICA2/patmatmotifs_result/session.txt','w') :
+                    open(os.environ['HOME'] +'/ICA2/patmatmotifs_result/session.txt','w').write(session) 
+                    os.chdir(os.environ['HOME'] +'/ICA2')
+                    subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n ~/ICA2/patmatmotifs_result/session.txt > ~/ICA2/patmatmotifs_result/{session}.fasta | patmatmotifs -sequence ~/ICA2/patmatmotifs_result/{session}.fasta -outfile ~/ICA2/patmatmotifs_result/{session}_motifs_analysis' , shell = True)
+                
+
+        
         show()
         choice = input("The result of patmatmotifs analysis has been put in ICA2. What else do you want to do? \n(If you want to quit, just print 'exit')\n\t").lower()
 print('THANK YOU for using this program, Have a nice day!')

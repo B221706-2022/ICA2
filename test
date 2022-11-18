@@ -1,1 +1,35 @@
-https://qinqianshan.com/bioinformatics/biosoft/emboss/
+import os
+os.chdir(os.environ['HOME'] + '/ICA2')
+with open('lkj.txt','w') :
+    open('lkj.txt','w').write('asd')
+with open('lkj.txt','w') :
+    open('lkj.txt','w').write('qwe')
+
+
+    print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
+        name = input('Please enter choose one gene name ,from the list above, you want to analysis\n\t')
+        if allname_after.count(name) > 1 :
+            name = namechange(name,allname_after,genefile_after)
+            with open(name,'w') :
+                open(name,'w').write(f'{name}')
+            os.chdir(os.environ['HOME'] + '/ICA2')
+            subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{name}.fasta | patmatmotifs -sequence ~/ICA2/{name}.fasta -outfile ~/ICA2/{name}_motifs_analysis' , shell = True)
+        else :
+            namewithout = name.replace(' ' , '_')       
+            subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{namewithout}.fasta | patmatmotifs -sequence ~/ICA2/{namewithout}.fasta -outfile ~/ICA2/{namewithout}_motifs_analysis')
+
+
+
+
+            print(f'After selection, there are {n_after} sequences left. The gene names are {allname_after} ')
+        name = input('Please enter choose one gene name ,from the list above, you want to analysis')
+
+        if allname_after.count(name) > 1 :
+            name = namechange(name,allname_after,genefile_after)
+            with open(name,'w') :
+                open(name,'w').write(f'{name}')
+            os.chdir(os.environ['HOME'] + '/ICA2')
+            subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{name}.fasta | pepinfo -sequence ~/ICA2/{name}.fasta -graph png -outfile ~/ICA2/{name}_pepinfo_analysis' , shell = True)
+        else :
+            namewithout = name.replace(' ' , '_')       
+            subprocess.call(f'./pullseq -i ~/ICA2/selected.fasta -n {name} > ~/ICA2/{namewithout}.fasta | pepinfo -sequence ~/ICA2/{namewithout}.fasta -graph png -outfile ~/ICA2/{namewithout}_pepinfo_analysis')
