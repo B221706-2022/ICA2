@@ -19,7 +19,6 @@ for i in genes :
         gene = i.split('[')[1].split(']')[0]
         genelist.append(gene)
         n +=1
-#print(n and ', '.join(genelist))
 #show the search result (all the gene name) to the user
 
 allseqerror = genefile.rstrip('\n').split('>')
@@ -59,7 +58,7 @@ allname_after = ', '.join(genelist_after)
 #get total gene amount and all the gene names for showing them to user later
 
 def show():    
-    print('\tMANU\nclustalo\tGeneral purpose multiple sequence alignment program for proteins\nplotcon\t\tPlot conservation of a sequence alignment(but you should do clustalo first)')
+    print('\tMENU\nclustalo\tGeneral purpose multiple sequence alignment program for proteins\nplotcon\t\tPlot conservation of a sequence alignment(but you should do clustalo first)')
     print('pepstats\tCalculate statistics of protein properties\npatmatmotifs\tScan a protein sequence with motifs from the PROSITE database (One sequence each time)')
     print('pepinfo\t\tPlot amino acid properties of a protein sequence in parallel (One sequence each time)')
 show()
@@ -91,8 +90,6 @@ def findhit(filename) :
             number = i.split(' ')[-1].rstrip()
     return number
         
-
-
 while choice != 'exit' :
     if choice == 'clustalo' :
         subprocess.call('clustalo -t Protein -i ~/ICA2/selected.fasta -o ~/ICA2/clustalo_analysis.msf --outfmt msf ' , shell = True )
@@ -152,5 +149,3 @@ while choice != 'exit' :
         choice = input("\nWRONG FUNCTION. Please type right function above. \n(If you want to quit, just print 'exit')\n\t").lower()
 print('THANK YOU for using this program, Have a nice day!')
 exit()
-
-#debug!!!!!!!!!!!!!!!!
