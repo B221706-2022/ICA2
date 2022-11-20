@@ -1,7 +1,10 @@
 #!/bin/python3
 
 import os , subprocess , shutil , re
-#shutil.copy('/localdisk/data/BPSM/ICA2/pullseq',os.environ['HOME']+'/ICA2')
+os.chdir(os.environ['HOME'])
+os.mkdir(os.environ['HOME']+'/ICA2')
+os.chdir(os.environ['HOME']+'/ICA2')
+shutil.copy('/localdisk/data/BPSM/ICA2/pullseq',os.environ['HOME']+'/ICA2')
 os.chdir(os.environ['HOME']+'/ICA2')
 speciesgive = input('Please enter the organism name you want to search (For example: ascomycete fungi)\n\t')
 genenamegive = input('Please enter the gene name you want to search (For example: pyruvate dehydrogenase)\n\t')
@@ -93,6 +96,7 @@ def findhit(filename) :
 while choice != 'exit' :
     if choice == 'clustalo' :
         subprocess.call('clustalo -t Protein -i ~/ICA2/selected.fasta -o ~/ICA2/clustalo_analysis.msf --outfmt msf ' , shell = True )
+        subprocess.call('clustalo -t Protein -i ~/ICA2/selected.fasta --distmat-out=clustalo_analysis_matrix --full' , shell = True )
         show()
         choice = input("The result of clustalo analysis has been put in ICA2. What else do you want to do? \n(If you want to quit, just print 'exit')\n\t").lower()
         
